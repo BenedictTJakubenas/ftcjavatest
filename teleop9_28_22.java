@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp
-public class teleop9_28_22 extends OpMode {
+public class teleop extends OpMode {
     private DcMotor leftFront;
     private DcMotor rightFront;
     private DcMotor leftBack;
     private DcMotor rightBack;
-
+    
     @Override
     public void init() {
         leftFront = hardwareMap.dcMotor.get("leftFront");
@@ -36,23 +36,19 @@ public class teleop9_28_22 extends OpMode {
         double lsy = gamepad1.left_stick_y;
         double rsx = gamepad1.right_stick_x;
         double rsy = gamepad1.right_stick_y;
-        double lfp = leftFront.getPower();
-        double lbp = leftBack.getPower();
-        double rfp = rightFront.getPower();
-        double rbp = rightBack.getPower();
 
-
+        
         //turn right
-        if (rsx > 0) {
+        if (Math.abs(rsx) > 0.05) {
             leftFront.setPower(gamepad1.right_stick_x);
             leftBack.setPower(gamepad1.right_stick_x);
             rightFront.setPower(-gamepad1.right_stick_x);
             rightBack.setPower(-gamepad1.right_stick_x);
-        } else if (rsx < 0) {//turn left
-            leftFront.setPower(gamepad1.right_stick_x);
-            leftBack.setPower(gamepad1.right_stick_x);
-            rightFront.setPower(-gamepad1.right_stick_x);
-            rightBack.setPower(-gamepad1.right_stick_x);
+        } else {
+            leftFront.setPower(0);
+            leftBack.setPower(0);
+            rightFront.setPower(0);
+            rightBack.setPower(0);
         }
         if (Math.abs(gamepad1.left_stick_y) > Math.abs(gamepad1.left_stick_x)) {
             leftFront.setPower(-gamepad1.left_stick_y);
@@ -64,20 +60,25 @@ public class teleop9_28_22 extends OpMode {
             rightBack.setPower(gamepad1.left_stick_x);
             leftFront.setPower(gamepad1.left_stick_x);
             leftBack.setPower(-gamepad1.left_stick_x);
-        }
-        if (Math.abs(rsx) < 0.05 && Math.abs(rsy) < 0.05 && Math.abs(lsx) < 0.05 && Math.abs(lsy) < 0.05) {
+        } else {
             leftFront.setPower(0);
             leftBack.setPower(0);
             rightFront.setPower(0);
             rightBack.setPower(0);
         }
+       /* if (Math.abs(rsx) < 0.05 && Math.abs(rsy) < 0.05 && Math.abs(lsx) < 0.05 && Math.abs(lsy) < 0.05) {
+            leftFront.setPower(0);
+            leftBack.setPower(0);
+            rightFront.setPower(0);
+            rightBack.setPower(0);
+        }*/
 
 
 
-        telemetry.addData("LeftFront Power", lfp);
-        telemetry.addData("LeftBack Power", lbp);
-        telemetry.addData("RightFront Power", rfp);
-        telemetry.addData("RightBack Power", rbp);
+        telemetry.addData("LeftFront Power", leftFront.getPower());
+        telemetry.addData("LeftBack Power", leftBack.getPower());
+        telemetry.addData("RightFront Power", rightFront.getPower());
+        telemetry.addData("RightBack Power", rightBack.getPower());
         telemetry.update();
     }
 }
