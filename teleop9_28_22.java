@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,7 +13,8 @@ public class teleop extends OpMode {
     private DcMotor rightFront;
     private DcMotor leftBack;
     private DcMotor rightBack;
-    private Servo lift;
+    private CRServo liftarm;
+    private DcMotor lift;
 
     @Override
     public void init() {
@@ -20,7 +22,8 @@ public class teleop extends OpMode {
         rightFront = hardwareMap.dcMotor.get("rightFront");
         leftBack = hardwareMap.dcMotor.get("leftBack");
         rightBack = hardwareMap.dcMotor.get("rightBack");
-        lift = hardwareMap.servo.get("lift");
+        liftarm = hardwareMap.crservo.get("liftarm");
+        lift = hardwareMap.dcMotor.get("lift");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -56,10 +59,10 @@ public class teleop extends OpMode {
             rightBack.setPower(0);
         }
         if (Math.abs(gamepad1.left_stick_y) > Math.abs(gamepad1.left_stick_x)) {
-            leftFront.setPower(-gamepad1.left_stick_y);
-            leftBack.setPower(-gamepad1.left_stick_y);
-            rightFront.setPower(-gamepad1.left_stick_y);
-            rightBack.setPower(-gamepad1.left_stick_y);
+            leftFront.setPower(-gamepad1.left_stick_y * 2);
+            leftBack.setPower(-gamepad1.left_stick_y * 2);
+            rightFront.setPower(-gamepad1.left_stick_y * 2);
+            rightBack.setPower(-gamepad1.left_stick_y * 2);
         }   else if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)) {
             rightFront.setPower(-gamepad1.left_stick_x);
             rightBack.setPower(gamepad1.left_stick_x);
@@ -84,10 +87,17 @@ public class teleop extends OpMode {
         //gamepad2
 
         if (gamepad2.dpad_down) {
-            lift.setPosition(0);
-        } else if (gamepad2.dpad_up) {
-            lift.setPosition(1);
+            liftarm.setPower(gamepad2.right_stick_y);
+        } else {
+            liftarm.setPower(0);
         }
+        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
+            lift.setPower(gamepad2.left_stick_y);
+        } else
+        {
+            lift.setPower(0);
+        }
+
 
 
 
@@ -96,7 +106,8 @@ public class teleop extends OpMode {
         telemetry.addData("LeftBack Power", leftBack.getPower());
         telemetry.addData("RightFront Power", rightFront.getPower());
         telemetry.addData("RightBack Power", rightBack.getPower());
-        telemetry.addData("lift Position", lift.getPosition());
+        telemetry.addData("lift Power", lift.getPower());
+        telemetry.addData("liftarm power", liftarm.getPower());
 
         telemetry.update();
     }
