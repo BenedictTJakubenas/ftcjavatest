@@ -4,19 +4,23 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+
 @TeleOp
 public class teleop extends OpMode {
     private DcMotor leftFront;
     private DcMotor rightFront;
     private DcMotor leftBack;
     private DcMotor rightBack;
-    
+    private Servo lift;
+
     @Override
     public void init() {
         leftFront = hardwareMap.dcMotor.get("leftFront");
         rightFront = hardwareMap.dcMotor.get("rightFront");
         leftBack = hardwareMap.dcMotor.get("leftBack");
         rightBack = hardwareMap.dcMotor.get("rightBack");
+        lift = hardwareMap.servo.get("lift");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -32,12 +36,13 @@ public class teleop extends OpMode {
 
     @Override
     public void loop() {
+        //gamepad1
         double lsx = gamepad1.left_stick_x;
         double lsy = gamepad1.left_stick_y;
         double rsx = gamepad1.right_stick_x;
         double rsy = gamepad1.right_stick_y;
 
-        
+
         //turn right
         if (Math.abs(rsx) > 0.05) {
             leftFront.setPower(gamepad1.right_stick_x);
@@ -75,10 +80,24 @@ public class teleop extends OpMode {
 
 
 
+
+        //gamepad2
+
+        if (gamepad2.dpad_down) {
+            lift.setPosition(0);
+        } else if (gamepad2.dpad_up) {
+            lift.setPosition(1);
+        }
+
+
+
+
         telemetry.addData("LeftFront Power", leftFront.getPower());
         telemetry.addData("LeftBack Power", leftBack.getPower());
         telemetry.addData("RightFront Power", rightFront.getPower());
         telemetry.addData("RightBack Power", rightBack.getPower());
+        telemetry.addData("lift Position", lift.getPosition());
+
         telemetry.update();
     }
 }
