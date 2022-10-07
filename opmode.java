@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class opmode extends LinearOpMode {
+public class opmode extends OpMode {
     private DcMotor leftFront;
     private DcMotor rightFront;
     private DcMotor leftBack;
@@ -16,7 +17,7 @@ public class opmode extends LinearOpMode {
     private DcMotor lift;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
         leftFront = hardwareMap.dcMotor.get("leftFront");
         rightFront = hardwareMap.dcMotor.get("rightFront");
         leftBack = hardwareMap.dcMotor.get("leftBack");
@@ -32,48 +33,46 @@ public class opmode extends LinearOpMode {
 
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE); // reverses leftfront motor direction because flipped
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE); // reverses leftback motor direction because flipped
-        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
-
 
         telemetry.addLine("Initialized");
+    }
+
+    @Override
+    public void loop() {
         //gamepad1
+        double lsx = gamepad1.left_stick_x;
+        double lsy = gamepad1.left_stick_y;
+        double rsx = gamepad1.right_stick_x;
+        double rsy = gamepad1.right_stick_y;
 
-        waitForStart();
-        telemetry.addLine("Initialized");
-        while (opModeIsActive())
-            //turn right
-            while (Math.abs(gamepad1.right_stick_x) > 0.05) {
-                leftFront.setPower(gamepad1.right_stick_x);
-                leftBack.setPower(gamepad1.right_stick_x);
-                rightFront.setPower(-gamepad1.right_stick_x);
-                rightBack.setPower(-gamepad1.right_stick_x);
-            }
-        while (gamepad1.right_bumper)
-        {
-            leftFront.setPower(-1);
-            leftBack.setPower(1);
-            rightFront.setPower(1);
-            rightBack.setPower(-1);
+
+        //turn right
+        if (Math.abs(rsx) > 0.05) {
+            leftFront.setPower(gamepad1.right_stick_x);
+            leftBack.setPower(gamepad1.right_stick_x);
+            rightFront.setPower(-gamepad1.right_stick_x);
+            rightBack.setPower(-gamepad1.right_stick_x);
+        } else {
+            leftFront.setPower(0);
+            leftBack.setPower(0);
+            rightFront.setPower(0);
+            rightBack.setPower(0);
         }
-        while (gamepad1.left_bumper)
-        {
-            leftFront.setPower(1);
-            leftBack.setPower(-1);
-            rightFront.setPower(-1);
-            rightBack.setPower(1);
-        }
-        while (Math.abs(gamepad1.left_stick_y) > Math.abs(gamepad1.left_stick_x)) {
+        if (Math.abs(gamepad1.left_stick_y) > Math.abs(gamepad1.left_stick_x)) {
             leftFront.setPower(-gamepad1.left_stick_y);
             leftBack.setPower(-gamepad1.left_stick_y);
             rightFront.setPower(-gamepad1.left_stick_y);
             rightBack.setPower(-gamepad1.left_stick_y);
-        }
-        while (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)) {
+        }   else if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)) {
             rightFront.setPower(-gamepad1.left_stick_x);
             rightBack.setPower(gamepad1.left_stick_x);
             leftFront.setPower(gamepad1.left_stick_x);
             leftBack.setPower(-gamepad1.left_stick_x);
+        } else {
+            leftFront.setPower(0);
+            leftBack.setPower(0);
+            rightFront.setPower(0);
+            rightBack.setPower(0);
         }
        /* if (Math.abs(rsx) < 0.05 && Math.abs(rsy) < 0.05 && Math.abs(lsx) < 0.05 && Math.abs(lsy) < 0.05) {
             leftFront.setPower(0);
@@ -87,11 +86,26 @@ public class opmode extends LinearOpMode {
 
         //gamepad2
 
-        while (Math.abs(gamepad2.right_stick_y) > 0.05) {
             liftarm.setPower(gamepad2.right_stick_y);
-        }
-        while (Math.abs(gamepad2.left_stick_y) > 0.05) {
+
+        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             lift.setPower(gamepad2.left_stick_y);
+        } else
+        {
+            lift.setPower(0);
         }
+
+
+
+
+
+        telemetry.addData("LeftFront Power", leftFront.getPower());
+        telemetry.addData("LeftBack Power", leftBack.getPower());
+        telemetry.addData("RightFront Power", rightFront.getPower());
+        telemetry.addData("RightBack Power", rightBack.getPower());
+        telemetry.addData("lift Power", lift.getPower());
+        telemetry.addData("liftarm power", liftarm.getPower());
+
+        telemetry.update();
     }
 }
