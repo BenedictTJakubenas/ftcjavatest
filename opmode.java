@@ -44,7 +44,12 @@ public class opmode extends OpMode {
         double lsy = gamepad1.left_stick_y;
         double rsx = gamepad1.right_stick_x;
         double rsy = gamepad1.right_stick_y;
-
+        if (gamepad2.a) {
+            leftFront.setPower(1);
+            leftBack.setPower(1);
+            rightFront.setPower(1);
+            rightBack.setPower(1);
+        }
 
         //turn right
         if (Math.abs(rsx) > 0.05) {
